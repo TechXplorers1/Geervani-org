@@ -17,6 +17,7 @@ import ProgramsPage from "@/pages/programs";
 import ProgramDetail from "@/pages/program-detail";
 import Blog from "@/pages/blog";
 import Contact from "@/pages/contact";
+import EventsPage from "@/pages/events";
 import NotFound from "@/pages/not-found";
 
 // Payment / receipt page
@@ -32,6 +33,9 @@ import AdminProjects from "@/pages/admin-projects";
 import AdminSettings from "@/pages/admin-settings";
 import AdminContacts from "@/pages/admin-contacts";
 import AdminPayments from "@/pages/admin-payments";
+import AdminStories from "@/pages/admin-stories";
+import AdminTrustees from "@/pages/admin-trustees";
+import AdminEvents from "@/pages/admin-events";
 
 // Auth
 import { AuthProvider } from "@/lib/auth";
@@ -58,6 +62,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/projects" component={Projects} />
+        <Route path="/events" component={EventsPage} />
         <Route path="/blog" component={Blog} />
         <Route path="/contact" component={Contact} />
 
@@ -134,6 +139,30 @@ function Router() {
           {() => (
             <RequireAuth>
               <AdminSettings />
+            </RequireAuth>
+          )}
+        </Route>
+
+        <Route path="/admin/stories">
+          {() => (
+            <RequireAuth>
+              <AdminStories />
+            </RequireAuth>
+          )}
+        </Route>
+
+        <Route path="/admin/trustees">
+          {() => (
+            <RequireAuth>
+              <AdminTrustees />
+            </RequireAuth>
+          )}
+        </Route>
+
+        <Route path="/admin/events">
+          {() => (
+            <RequireAuth>
+              <AdminEvents />
             </RequireAuth>
           )}
         </Route>

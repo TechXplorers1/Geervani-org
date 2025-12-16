@@ -15,9 +15,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-import heroImage1 from "@assets/hero_indian_women_empowerment.png";
-import heroImage2 from "@assets/hero_indian_community_health.png";
-import heroImage3 from "@assets/hero_indian_youth_education.png";
+// Update to new Indian-style hero images
+const heroImage1 = "/images/hero_indian_women_empowerment_v2.png";
+const heroImage2 = "/images/hero_indian_community_health_v2.png";
+const heroImage3 = "/images/hero_indian_youth_education_v2.png";
 
 // map DB program titles → hero images
 const programHeroImages: Record<string, string> = {
@@ -33,12 +34,12 @@ const fallbackSlides = [
     subtitle:
       "Building a future of gender equality and sustainable development across India",
     image: heroImage1,
-    programPath: "/programs", // 👈 go to programs page
+    programPath: "/programs",
   },
   {
-    title: "Gender Equality for All",
+    title: "Community Health & Well-being",
     subtitle:
-      "Creating opportunities and advocating for women's rights in every community",
+      "Creating opportunities and ensuring access to essential healthcare in every community",
     image: heroImage2,
     programPath: "/programs",
   },
@@ -53,7 +54,6 @@ const fallbackSlides = [
 
 export default function HeroCarousel() {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // 🔹 Load real programs from API (same data ProgramDetail uses)
@@ -67,7 +67,7 @@ export default function HeroCarousel() {
       ? programs.slice(0, 3).map((program) => ({
         title: program.title,
         subtitle: program.description,
-        image: programHeroImages[program.title] ?? heroImage1,
+        image: program.image || programHeroImages[program.title] || heroImage1,
         programPath: `/programs/${program.id}`,
       }))
       : null;
@@ -109,96 +109,53 @@ export default function HeroCarousel() {
         navigation={false}
         pagination={{
           clickable: true,
-          // classes still picked up by Swiper CSS, plus your Tailwind tweaks
           bulletClass: "swiper-pagination-bullet !bg-white/50",
           bulletActiveClass: "swiper-pagination-bullet-active !bg-white",
         }}
+        loop={true}
         autoplay={
           prefersReducedMotion
             ? false
-            : { delay: 5000, disableOnInteraction: false }
+            : { delay: 6000, disableOnInteraction: false }
         }
-        speed={prefersReducedMotion ? 0 : 450}
+        speed={prefersReducedMotion ? 0 : 800}
         onSwiper={setSwiper}
-        onSlideChange={(swiperInstance) => setActiveIndex(swiperInstance.activeIndex)}
         className="h-full"
       >
         {slidesToRender.map((slide, index) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide key={index} className="group">
             <div className="relative h-full w-full">
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 z-10" />
 
-              <motion.img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover"
-                initial={{ scale: 1.1 }}
-                animate={{ scale: activeIndex === index ? 1 : 1.1 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.45,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              />
+              {/* Image Scale Animation */}
+              <div className="w-full h-full overflow-hidden">
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out scale-110 group-[.swiper-slide-active]:scale-100"
+                />
+              </div>
 
               <div className="absolute inset-0 z-20 flex items-center">
                 <div className="container mx-auto px-4">
-                  <motion.div
-                    className="max-w-3xl"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{
-                      opacity: activeIndex === index ? 1 : 0,
-                      x: activeIndex === index ? 0 : -50,
-                    }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.45,
-                      delay: prefersReducedMotion ? 0 : 0.2,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    <motion.h2
-                      className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-4 md:mb-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: activeIndex === index ? 1 : 0,
-                        y: activeIndex === index ? 0 : 20,
-                      }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.45,
-                        delay: prefersReducedMotion ? 0 : 0.3,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
+                  <div className="max-w-3xl transform transition-all duration-700">
+                    {/* Title Animation */}
+                    <h2
+                      className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-4 md:mb-6 opacity-0 translate-y-8 transition-all duration-700 delay-300 group-[.swiper-slide-active]:opacity-100 group-[.swiper-slide-active]:translate-y-0 ease-out"
                     >
                       {slide.title}
-                    </motion.h2>
+                    </h2>
 
-                    <motion.p
-                      className="font-sans text-lg md:text-xl text-white/90 mb-8"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: activeIndex === index ? 1 : 0,
-                        y: activeIndex === index ? 0 : 20,
-                      }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.45,
-                        delay: prefersReducedMotion ? 0 : 0.4,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
+                    {/* Subtitle Animation */}
+                    <p
+                      className="font-sans text-lg md:text-xl text-white/90 mb-8 opacity-0 translate-y-8 transition-all duration-700 delay-500 group-[.swiper-slide-active]:opacity-100 group-[.swiper-slide-active]:translate-y-0 ease-out"
                     >
                       {slide.subtitle}
-                    </motion.p>
+                    </p>
 
-                    <motion.div
-                      className="flex flex-col sm:flex-row gap-4"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: activeIndex === index ? 1 : 0,
-                        y: activeIndex === index ? 0 : 20,
-                      }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.45,
-                        delay: prefersReducedMotion ? 0 : 0.5,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
+                    {/* Buttons Animation */}
+                    <div
+                      className="flex flex-col sm:flex-row gap-4 opacity-0 translate-y-8 transition-all duration-700 delay-700 group-[.swiper-slide-active]:opacity-100 group-[.swiper-slide-active]:translate-y-0 ease-out"
                     >
                       {/* 🔘 Our Programs – open /programs page */}
                       <Button
@@ -221,8 +178,8 @@ export default function HeroCarousel() {
                       >
                         <Link href={slide.programPath}>Learn More</Link>
                       </Button>
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

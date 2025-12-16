@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
-import { db, Project } from "@/lib/db";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import type { Project, InsertProject } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import {
   Table,
@@ -44,17 +44,16 @@ export default function AdminProjects() {
   const [outcomes, setOutcomes] = useState("");
 
   const { data: projects, isLoading } = useQuery<Project[]>({
-    queryKey: ["local-projects"],
-    queryFn: db.getProjects,
+    queryKey: ["/api/projects"],
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
-      // Cast to match the Omit<Project...> expected by db
-      return await db.createProject(data);
+    mutationFn: async (data: InsertProject) => {
+      const res = await apiRequest("POST", "/api/projects", data);
+      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       toast({ title: "Success", description: "Project created." });
       setIsDialogOpen(false);
     },
@@ -69,10 +68,11 @@ export default function AdminProjects() {
 
   const updateMutation = useMutation({
     mutationFn: async (project: Project) => {
-      return await db.updateProject(project);
+      const res = await apiRequest("PATCH", `/api/projects/${project.id}`, project);
+      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       toast({ title: "Success", description: "Project updated." });
       setIsDialogOpen(false);
       setEditingProject(null);
@@ -87,11 +87,11 @@ export default function AdminProjects() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: number | string) => {
-      await db.deleteProject(id);
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/projects/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       toast({ title: "Deleted", description: "Project removed." });
     },
     onError: (error: Error) => {
@@ -126,10 +126,10 @@ export default function AdminProjects() {
     setCategory(project.category);
     setDescription(project.description);
     setImage(project.image);
-    setDuration(project.stats.duration);
-    setBeneficiaries(project.stats.beneficiaries);
-    setPartners(project.stats.partners);
-    setOutcomes(project.stats.outcomes);
+    setDuration(project.duration);
+    setBeneficiaries(project.beneficiaries);
+    setPartners(project.partners);
+    setOutcomes(project.outcomes);
     setIsDialogOpen(true);
   };
 
@@ -146,17 +146,15 @@ export default function AdminProjects() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = {
+    const data: InsertProject = {
       title,
       category,
       description,
       image,
-      stats: {
-        duration,
-        beneficiaries,
-        partners,
-        outcomes,
-      },
+      duration,
+      beneficiaries,
+      partners,
+      outcomes,
     };
 
     if (editingProject) {
@@ -244,6 +242,7 @@ export default function AdminProjects() {
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
                       placeholder="e.g. 2023 - Present"
+                      required
                     />
                   </div>
                   <div>
@@ -253,6 +252,7 @@ export default function AdminProjects() {
                       value={beneficiaries}
                       onChange={(e) => setBeneficiaries(e.target.value)}
                       placeholder="e.g. 1000+"
+                      required
                     />
                   </div>
                   <div>
@@ -262,6 +262,7 @@ export default function AdminProjects() {
                       value={partners}
                       onChange={(e) => setPartners(e.target.value)}
                       placeholder="e.g. UN Women"
+                      required
                     />
                   </div>
                   <div>
@@ -271,6 +272,7 @@ export default function AdminProjects() {
                       value={outcomes}
                       onChange={(e) => setOutcomes(e.target.value)}
                       placeholder="e.g. Reduced poverty"
+                      required
                     />
                   </div>
                 </div>
@@ -326,7 +328,7 @@ export default function AdminProjects() {
                   <TableCell className="capitalize">
                     {project.category}
                   </TableCell>
-                  <TableCell>{project.stats?.duration}</TableCell>
+                  <TableCell>{project.duration}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button

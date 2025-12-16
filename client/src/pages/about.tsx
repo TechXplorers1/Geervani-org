@@ -3,6 +3,7 @@ import { db } from "@/lib/db"; // unused
 import { SiteConfig, Value, Staff } from "@shared/schema";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import TrusteesSection from "@/components/TrusteesSection";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import {
@@ -11,7 +12,7 @@ import {
   Heart,
   Users,
   Linkedin,
-  Twitter,
+  Instagram,
   Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -198,6 +199,8 @@ export default function About() {
           </div>
         </section>
 
+        <TrusteesSection />
+
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-4">
             <motion.div
@@ -241,33 +244,48 @@ export default function About() {
                         className="absolute inset-0 bg-primary/90 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         initial={false}
                       >
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="h-10 w-10"
-                          data-testid={`button-team-email-${index}`}
-                          aria-label="Email"
-                        >
-                          <Mail className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="h-10 w-10"
-                          data-testid={`button-team-linkedin-${index}`}
-                          aria-label="LinkedIn"
-                        >
-                          <Linkedin className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="h-10 w-10"
-                          data-testid={`button-team-twitter-${index}`}
-                          aria-label="Twitter"
-                        >
-                          <Twitter className="h-5 w-5" />
-                        </Button>
+                        {member.email && (
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="h-10 w-10"
+                            data-testid={`button-team-email-${index}`}
+                            aria-label="Email"
+                            asChild
+                          >
+                            <a href={`mailto:${member.email}`}>
+                              <Mail className="h-5 w-5" />
+                            </a>
+                          </Button>
+                        )}
+                        {member.linkedin && (
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="h-10 w-10"
+                            data-testid={`button-team-linkedin-${index}`}
+                            aria-label="LinkedIn"
+                            asChild
+                          >
+                            <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                              <Linkedin className="h-5 w-5" />
+                            </a>
+                          </Button>
+                        )}
+                        {member.instagram && (
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="h-10 w-10"
+                            data-testid={`button-team-instagram-${index}`}
+                            aria-label="Instagram"
+                            asChild
+                          >
+                            <a href={member.instagram} target="_blank" rel="noopener noreferrer">
+                              <Instagram className="h-5 w-5" />
+                            </a>
+                          </Button>
+                        )}
                       </motion.div>
                     </div>
                     <div className="p-6">

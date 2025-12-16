@@ -10,6 +10,8 @@ import {
   Users,
   Layers,
   LogOut,
+  Heart,
+  Calendar,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -19,11 +21,14 @@ type AdminLayoutProps = {
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/messages", label: "Messages", icon: BookOpen }, // Added
-  { href: "/admin/payments", label: "Payments", icon: Layers },   // Added
+  { href: "/admin/messages", label: "Messages", icon: BookOpen },
+  { href: "/admin/payments", label: "Payments", icon: Layers },
   { href: "/admin/programs", label: "Programs", icon: BookOpen },
+  { href: "/admin/events", label: "Events", icon: Calendar },             // Added
+  { href: "/admin/stories", label: "Stories", icon: Heart },
   { href: "/admin/blog", label: "Blog Posts", icon: BookOpen },
   { href: "/admin/about", label: "Team Members", icon: Users },
+  { href: "/admin/trustees", label: "Trustees", icon: Users },             // Added
   { href: "/admin/projects", label: "Projects", icon: Layers },
   { href: "/admin/settings", label: "Settings", icon: BookOpen },
 ];

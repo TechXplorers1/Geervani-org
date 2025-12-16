@@ -1,4 +1,3 @@
-// client/src/components/ProgramsSection.tsx
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
@@ -10,54 +9,18 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
-
-import { db, Program } from "@/lib/db";
-
-// Indian cultural images (Still needed for fallback or initial rendering if we used them in db.ts imports)
-import literacyImage from "@assets/project_indian_literacy.png";
-import youthImage from "@assets/hero_indian_youth_education.png";
-import healthImage from "@assets/hero_indian_community_health.png";
-import empowermentImage from "@assets/hero_indian_women_empowerment.png";
-import educatorImage from "@assets/team_indian_educator_female.png";
-import differentlyAbledImage from "@assets/program_differently_abled.png";
-import ruralDevImage from "@assets/program_rural_development.png";
-import youthEmpowermentImage from "@assets/program_youth_empowerment.png";
+import { useQuery } from "@tanstack/react-query";
+import type { Program } from "@shared/schema";
 
 export default function ProgramsSection() {
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: programs, isLoading } = useQuery<Program[]>({
+    queryKey: ["/api/programs"],
+  });
 
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const data = await db.getPrograms();
-        setPrograms(data);
-      } catch (error) {
-        console.error("Failed to fetch programs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPrograms();
-  }, []);
-
-  // Map programs to images for the gallery. 
-  // In a real app, images would be part of the program data URL.
-  // We'll use the images from the loaded programs.
-
-  const galleryImages = programs.map(p => p.image).filter(Boolean);
-
-  // If data is loading, we might want to show skeletons, but for now we'll just render empty or a loader.
-  // However, since we want to keep the UX smooth, we will wait for data.
-  // For the 'projects' variable below, we remap 'programs' to match the expected structure if needed, 
-  // but our DB 'Program' type matches the component's needs.
-
-
-
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
-    null
-  );
+  const galleryImages = programs?.map(p => p.image).filter(Boolean) || [];
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index);
@@ -96,6 +59,19 @@ export default function ProgramsSection() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImageIndex]);
+
+  if (isLoading) {
+    return (
+      <div className="py-20 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // Fallback if no programs
+  if (!programs || programs.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -183,7 +159,7 @@ export default function ProgramsSection() {
                                 Duration
                               </p>
                               <p className="font-sans text-sm text-muted-foreground">
-                                {project.stats.duration}
+                                {project.duration}
                               </p>
                             </div>
                           </div>
@@ -194,7 +170,7 @@ export default function ProgramsSection() {
                                 Beneficiaries
                               </p>
                               <p className="font-sans text-sm text-muted-foreground">
-                                {project.stats.beneficiaries}
+                                {project.beneficiaries}
                               </p>
                             </div>
                           </div>
@@ -205,7 +181,7 @@ export default function ProgramsSection() {
                                 Partners
                               </p>
                               <p className="font-sans text-sm text-muted-foreground">
-                                {project.stats.partners}
+                                {project.partners}
                               </p>
                             </div>
                           </div>
@@ -217,7 +193,7 @@ export default function ProgramsSection() {
                           Key Outcomes
                         </h5>
                         <p className="font-sans text-sm text-muted-foreground">
-                          {project.stats.outcomes}
+                          {project.outcomes}
                         </p>
                       </div>
                     </div>

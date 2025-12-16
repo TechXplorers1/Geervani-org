@@ -72,7 +72,7 @@ export interface Staff {
     image: string; // Changed from photoUrl to image for consistency or map it
     email?: string;
     linkedin?: string;
-    twitter?: string;
+    instagram?: string;
     isActive: boolean;
 }
 

@@ -5,50 +5,35 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Calendar, Users, Award } from "lucide-react";
 
-import { useEffect } from "react";
-import { db, Project } from "@/lib/db";
+import { useQuery } from "@tanstack/react-query";
+import type { Project } from "@shared/schema";
+import { Loader2 } from "lucide-react";
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: projects, isLoading } = useQuery<Project[]>({
+    queryKey: ["/api/projects"],
+  });
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await db.getProjects();
-        setProjects(data);
-      } catch (error) {
-        console.error("Failed to fetch projects:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjects();
-  }, []);
-
-  const galleryImages = projects.map(p => p.image).filter(Boolean);
-
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-
-  const handleImageClick = (index: number) => {
-    setSelectedImageIndex(index);
-  };
-
-  const closeModal = () => {
-    setSelectedImageIndex(null);
-  };
-
-  const showPrevImage = () => {
-    setSelectedImageIndex((prev) =>
-      prev !== null ? (prev === 0 ? galleryImages.length - 1 : prev - 1) : prev
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
-  };
+  }
 
-  const showNextImage = () => {
-    setSelectedImageIndex((prev) =>
-      prev !== null ? (prev === galleryImages.length - 1 ? 0 : prev + 1) : prev
+  // Fallback if no projects
+  if (!projects || projects.length === 0) {
+    return (
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <Header />
+        <main className="pt-24 min-h-[50vh] flex items-center justify-center">
+          <p className="text-muted-foreground">No projects found.</p>
+        </main>
+        <Footer />
+      </div>
     );
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -133,7 +118,7 @@ export default function Projects() {
                               <div>
                                 <p className="font-medium text-sm">Duration</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {project.stats.duration}
+                                  {project.duration}
                                 </p>
                               </div>
                             </div>
@@ -142,7 +127,7 @@ export default function Projects() {
                               <div>
                                 <p className="font-medium text-sm">Beneficiaries</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {project.stats.beneficiaries}
+                                  {project.beneficiaries}
                                 </p>
                               </div>
                             </div>
@@ -151,7 +136,7 @@ export default function Projects() {
                               <div>
                                 <p className="font-medium text-sm">Partners</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {project.stats.partners}
+                                  {project.partners}
                                 </p>
                               </div>
                             </div>
@@ -163,7 +148,7 @@ export default function Projects() {
                             Key Outcomes
                           </h4>
                           <p className="text-sm text-muted-foreground">
-                            {project.stats.outcomes}
+                            {project.outcomes}
                           </p>
                         </div>
                       </div>
@@ -174,9 +159,6 @@ export default function Projects() {
             </div>
           </div>
         </section>
-
-        {/* Gallery - unchanged */}
-        {/* Keep your gallery & modal here */}
       </main>
 
       <Footer />

@@ -69,7 +69,7 @@ export const staff = pgTable("staff", {
   image: text("image").notNull(),
   email: text("email"),
   linkedin: text("linkedin"),
-  twitter: text("twitter"),
+  instagram: text("instagram"),
 });
 
 export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
@@ -136,6 +136,29 @@ export const values = pgTable("values", {
   order: integer("order").notNull().default(0),
 });
 
+/* -------------------- TRUSTEES -------------------- */
+
+export const trustees = pgTable("trustees", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  role: text("role").notNull(),
+  category: text("category").notNull(), // "Board of Trustees", "Advisory Board", etc.
+  bio: text("bio").notNull(),
+  image: text("image").notNull(),
+  linkedin: text("linkedin"),
+});
+
+/* -------------------- EVENTS -------------------- */
+
+export const events = pgTable("events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  date: timestamp("date").notNull(),
+  location: text("location").notNull(),
+  image: text("image").notNull(),
+});
+
 /* -------------------- DONATIONS -------------------- */
 
 export const donations = pgTable("donations", {
@@ -184,6 +207,9 @@ export const insertProjectSchema = createInsertSchema(projects).omit({ id: true 
 export const insertValueSchema = createInsertSchema(values).omit({ id: true });
 export const insertSiteConfigSchema = createInsertSchema(siteConfig);
 
+export const insertTrusteeSchema = createInsertSchema(trustees).omit({ id: true });
+export const insertEventSchema = createInsertSchema(events).omit({ id: true });
+
 /* -------------------- TYPES -------------------- */
 
 export type Program = typeof programs.$inferSelect;
@@ -224,3 +250,9 @@ export type InsertValue = z.infer<typeof insertValueSchema>;
 
 export type SiteConfig = typeof siteConfig.$inferSelect;
 export type InsertSiteConfig = z.infer<typeof insertSiteConfigSchema>;
+
+export type Trustee = typeof trustees.$inferSelect;
+export type InsertTrustee = z.infer<typeof insertTrusteeSchema>;
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = z.infer<typeof insertEventSchema>;

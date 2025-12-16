@@ -2,7 +2,7 @@
 import { FormEvent, useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,7 +108,17 @@ const AdminLogin = () => {
             className="w-full"
           >
             <div className="mx-auto w-full max-w-md">
-              <div className="rounded-3xl bg-white shadow-[0_30px_80px_rgba(0,0,0,0.6)] ring-1 ring-slate-200 px-8 py-9 text-slate-900">
+              <div className="relative rounded-3xl bg-white shadow-[0_30px_80px_rgba(0,0,0,0.6)] ring-1 ring-slate-200 px-8 py-9 text-slate-900">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 left-4 text-slate-400 hover:text-slate-600 hover:bg-slate-100/50"
+                  onClick={() => navigate("/")}
+                  title="Back to Home"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+
                 {/* Header */}
                 <div className="mb-6 text-center">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-blue-600">
@@ -188,7 +198,6 @@ const AdminLogin = () => {
                   </Button>
                 </form>
 
-                {/* Demo credentials */}
                 <div className="mt-6 border-t border-dashed border-slate-200 pt-4 text-center text-[11px] text-gray-600">
                   <p className="mb-1 font-semibold text-slate-900">
                     Demo admin credentials

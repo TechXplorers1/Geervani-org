@@ -3,9 +3,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertBlogPostSchema } from "@shared/schema";
-import { queryClient } from "@/lib/queryClient";
-import { db, BlogPost } from "@/lib/db";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { insertBlogPostSchema, type BlogPost, type InsertBlogPost } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import {
   Table,
@@ -42,16 +41,16 @@ export default function AdminBlog() {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
 
   const { data: posts, isLoading } = useQuery<BlogPost[]>({
-    queryKey: ["local-blog"],
-    queryFn: db.getBlogPosts,
+    queryKey: ["/api/blog-posts"],
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await db.createBlogPost(data);
+    mutationFn: async (data: InsertBlogPost) => {
+      const res = await apiRequest("POST", "/api/blog-posts", data);
+      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-blog"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Success", description: "Blog post created successfully" });
       setIsDialogOpen(false);
     },
@@ -66,10 +65,11 @@ export default function AdminBlog() {
 
   const updateMutation = useMutation({
     mutationFn: async (post: BlogPost) => {
-      return await db.updateBlogPost(post);
+      const res = await apiRequest("PATCH", `/api/blog-posts/${post.id}`, post);
+      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-blog"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Success", description: "Blog post updated successfully" });
       setIsDialogOpen(false);
       setEditingPost(null);
@@ -84,11 +84,11 @@ export default function AdminBlog() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string | number) => {
-      await db.deleteBlogPost(id);
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/blog-posts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["local-blog"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Success", description: "Blog post deleted successfully" });
     },
     onError: (error: Error) => {
@@ -102,7 +102,7 @@ export default function AdminBlog() {
 
   // We reuse the basic schema but we'll manually handle the image field
   // or simple let the form update valid string.
-  const form = useForm<any>({
+  const form = useForm<InsertBlogPost>({
     resolver: zodResolver(insertBlogPostSchema),
     defaultValues: {
       title: "",
@@ -125,7 +125,7 @@ export default function AdminBlog() {
     }
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: InsertBlogPost) => {
     if (editingPost) {
       updateMutation.mutate({ ...editingPost, ...data });
     } else {
@@ -244,7 +244,6 @@ export default function AdminBlog() {
                               className="w-full h-32 object-cover rounded-md mt-2"
                             />
                           )}
-                          {/* Hidden input to keep binding with react-hook-form if needed, or just manual logic */}
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -333,7 +332,8 @@ export default function AdminBlog() {
                   </TableCell>
                   <TableCell>{post.category}</TableCell>
                   <TableCell>
-                    {new Date(post.publishedAt).toLocaleDateString()}
+                    {/* @ts-ignore */}
+                    {(post.publishedAt ? new Date(post.publishedAt) : new Date()).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

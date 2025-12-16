@@ -41,9 +41,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-import programImage1 from "@assets/generated_images/Women_economic_empowerment_program_d8422519.png";
-import programImage2 from "@assets/generated_images/Youth_development_program_ecd0f2bd.png";
-import programImage3 from "@assets/generated_images/Community_health_program_b7634ba0.png";
+const programImage1 = "/images/Women_economic_empowerment_program_d8422519.png";
+const programImage2 = "/images/Youth_development_program_ecd0f2bd.png";
+const programImage3 = "/images/Community_health_program_b7634ba0.png";
 
 const programImages: Record<string, string> = {
   "Women's Economic Empowerment": programImage1,
@@ -144,9 +144,9 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
   const program = programs?.find((p) => p.id === id);
 
   const image =
-    program && programImages[program.title]
-      ? programImages[program.title]
-      : programImage1;
+    program?.image ||
+    (program && programImages[program.title]) ||
+    programImage1;
 
   const donationProgram: InsertDonation["program"] =
     titleToDonationProgram[program?.title || ""] ?? "general";
