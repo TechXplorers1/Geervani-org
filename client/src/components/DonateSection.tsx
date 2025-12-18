@@ -88,77 +88,91 @@ export function DonateSection({ initialProgram }: DonateSectionProps) {
     donationId: string,
     amount: number
   ) => {
-    const loaded = await loadRazorpayScript();
-
-    if (!loaded) {
-      toast({
-        title: "Payment SDK failed to load",
-        description: "Please check your internet and try again.",
-        variant: "destructive",
+    try {
+      // 1. Create Order on Server
+      const orderResponse = await apiRequest("POST", "/api/create-order", {
+        amount,
+        currency: "INR",
       });
-      return;
-    }
+      const orderData = await orderResponse.json();
 
-    // 🔥 Hard-coded TEST key (safe for testing)
-    const keyId = "rzp_test_Rjy0Hn2Ns66KiP";
+      const { orderId, keyId, amount: orderAmount } = orderData;
 
-    if (!(window as any).Razorpay) {
-      toast({
-        title: "Payment SDK not available",
-        description: "Razorpay SDK not found on window. Please retry.",
-        variant: "destructive",
-      });
-      console.error("❌ window.Razorpay is not defined even after loading script.");
-      return;
-    }
+      const loaded = await loadRazorpayScript();
 
-    console.log("🟢 Using Razorpay TEST key:", keyId);
-
-    const options: any = {
-      key: keyId,
-      amount: amount * 100, // amount in paise
-      currency: "INR",
-      name: "TGF",
-      description: "Donation",
-      handler: function (response: any) {
-        // This is called after successful payment in TEST mode
+      if (!loaded) {
         toast({
-          title: "Payment successful!",
-          description: `Payment ID: ${response.razorpay_payment_id}`,
+          title: "Payment SDK failed to load",
+          description: "Please check your internet and try again.",
+          variant: "destructive",
         });
+        return;
+      }
 
-        // Reset form & state
-        form.reset();
-        setSelectedAmount(null);
-        setCustomAmount("");
+      if (!(window as any).Razorpay) {
+        toast({
+          title: "Payment SDK not available",
+          description: "Razorpay SDK not found on window. Please retry.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-        // Redirect to invoice / receipt page
-        const query = new URLSearchParams({
-          donationId: donationId,
-          paymentId: response.razorpay_payment_id,
-          email: donation.donorEmail || "",
+      console.log("🟢 Initializing Razorpay with Order ID:", orderId);
+
+      const options: any = {
+        key: keyId, // Key ID from server
+        amount: orderAmount, // Amount from server (should match)
+        currency: "INR",
+        name: "TGF",
+        description: "Donation",
+        order_id: orderId, // Pass the Order ID here
+        handler: function (response: any) {
+          toast({
+            title: "Payment successful!",
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+
+          // Reset form & state
+          form.reset();
+          setSelectedAmount(null);
+          setCustomAmount("");
+
+          // Redirect to invoice / receipt page
+          const query = new URLSearchParams({
+            donationId: donationId,
+            paymentId: response.razorpay_payment_id,
+            email: donation.donorEmail || "",
+            name: donation.donorName || "",
+            amount: String(amount),
+            program: donation.program || "general",
+          }).toString();
+
+          window.location.href = `/payment-success?${query}`;
+        },
+        prefill: {
           name: donation.donorName || "",
-          amount: String(amount),
+          email: donation.donorEmail || "",
+        },
+        notes: {
+          donationId,
           program: donation.program || "general",
-        }).toString();
+        },
+        theme: {
+          color: "#16a34a",
+        },
+      };
 
-        window.location.href = `/payment-success?${query}`;
-      },
-      prefill: {
-        name: donation.donorName || "",
-        email: donation.donorEmail || "",
-      },
-      notes: {
-        donationId,
-        program: donation.program || "general",
-      },
-      theme: {
-        color: "#16a34a",
-      },
-    };
-
-    const razorpay = new (window as any).Razorpay(options);
-    razorpay.open();
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
+    } catch (error: any) {
+      console.error("Payment initiation failed:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to initiate secure payment. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const onSubmit = (data: InsertDonation) => {
