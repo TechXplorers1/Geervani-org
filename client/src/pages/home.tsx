@@ -159,9 +159,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <Header />
+      <Header transparent={true} />
 
-      <main>
+      <main className="pt-0">
         <HeroCarousel />
         <StatsSection />
         <ProgramsSection />

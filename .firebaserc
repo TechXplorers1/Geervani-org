@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "comagend-abb03"
-  }
+    "default": "txtgf-c0e3b",
+    "tgf": "txtgf-c0e3b"
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -34,7 +34,7 @@ export default function StatsSection() {
   return (
     <section ref={ref} className="py-16 md:py-20 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4">
-        <div className={`grid grid-cols-2 lg:grid-cols-${Math.min(stats.length, 4)} gap-8 md:gap-12`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(stats.length, 4)} gap-8 md:gap-12`}>
           {stats.map((stat, index) => {
             // @ts-ignore
             const Icon = Icons[stat.icon] || Icons.HelpCircle;
