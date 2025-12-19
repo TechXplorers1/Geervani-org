@@ -22,6 +22,7 @@ import NotFound from "@/pages/not-found";
 
 // Payment / receipt page
 import PaymentSuccess from "@/pages/payment-success";
+import SeedDatabase from "@/components/SeedDatabase";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -74,6 +75,9 @@ function Router() {
 
         {/* Payment success / invoice page */}
         <Route path="/payment-success" component={PaymentSuccess} />
+
+        {/* Seed Database (Dev only) */}
+        <Route path="/seed" component={SeedDatabase} />
 
         {/* Admin Login (Public) */}
         <Route path="/admin/login" component={AdminLogin} />

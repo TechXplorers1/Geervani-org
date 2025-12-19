@@ -2,7 +2,8 @@
 
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { type ContactMessage, type NewsletterSubscription } from "@shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { getContactMessages, getNewsletterSubscriptions, deleteContactMessage } from "@/lib/rtdb";
+import { queryClient } from "@/lib/queryClient";
 import AdminLayout from "@/components/AdminLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -28,19 +29,21 @@ export default function AdminContacts() {
   const { toast } = useToast();
 
   const { data: messages, isLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact-messages"],
+    queryKey: ["contact-messages"],
+    queryFn: getContactMessages,
   });
 
   const { data: subscribers, isLoading: isSubscribersLoading } = useQuery<NewsletterSubscription[]>({
-    queryKey: ["/api/newsletter"],
+    queryKey: ["newsletter-subscriptions"],
+    queryFn: getNewsletterSubscriptions,
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/contact/${id}`);
+      await deleteContactMessage(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/contact-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
       toast({ title: "Success", description: "Message deleted successfully" });
     },
     onError: (error: Error) => {

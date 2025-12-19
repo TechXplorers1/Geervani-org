@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { db } from "@/lib/db"; // unused
+import { getSiteConfig, getTeam } from "@/lib/rtdb";
 import { SiteConfig, Value, Staff } from "@shared/schema";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -19,7 +19,8 @@ import { Button } from "@/components/ui/button";
 
 export default function About() {
   const { data: config } = useQuery<SiteConfig>({
-    queryKey: ["/api/site-config"],
+    queryKey: ["site-config"],
+    queryFn: async () => await getSiteConfig()
   });
 
   /* const { data: values = [] } = useQuery<Value[]>({
@@ -27,7 +28,8 @@ export default function About() {
   }); */
 
   const { data: team = [] } = useQuery<Staff[]>({
-    queryKey: ["/api/staff"],
+    queryKey: ["staff"],
+    queryFn: getTeam,
   });
 
   /* const IconMap: Record<string, any> = {

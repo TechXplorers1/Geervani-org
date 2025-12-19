@@ -4,7 +4,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertSiteConfigSchema, type SiteConfig, type InsertSiteConfig } from "@shared/schema";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getSiteConfig, updateSiteConfig } from "@/lib/rtdb";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +26,8 @@ export default function AdminSettings() {
     const { toast } = useToast();
 
     const { data: config, isLoading } = useQuery<SiteConfig>({
-        queryKey: ["/api/site-config"],
+        queryKey: ["site-config"],
+        queryFn: getSiteConfig,
     });
 
     const form = useForm<InsertSiteConfig>({
@@ -45,10 +47,10 @@ export default function AdminSettings() {
 
     const updateMutation = useMutation({
         mutationFn: async (data: InsertSiteConfig) => {
-            return await apiRequest("PATCH", "/api/site-config", data);
+            return await updateSiteConfig(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/site-config"] });
+            queryClient.invalidateQueries({ queryKey: ["site-config"] });
             toast({ title: "Success", description: "Settings updated successfully" });
         },
         onError: (error: Error) => {

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import AdminLayout from "@/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getTrustees, createTrustee, updateTrustee, deleteTrustee } from "@/lib/rtdb";
 import {
     Table,
     TableBody,
@@ -47,7 +48,8 @@ export default function AdminTrustees() {
     const [editingTrustee, setEditingTrustee] = useState<Trustee | null>(null);
 
     const { data: trustees, isLoading } = useQuery<Trustee[]>({
-        queryKey: ["/api/trustees"],
+        queryKey: ["trustees"],
+        queryFn: getTrustees,
     });
 
     const form = useForm<InsertTrustee>({
@@ -64,8 +66,7 @@ export default function AdminTrustees() {
 
     const createMutation = useMutation({
         mutationFn: async (data: InsertTrustee) => {
-            const res = await apiRequest("POST", "/api/trustees", data);
-            return res.json();
+            return createTrustee(data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["/api/trustees"] });
@@ -90,8 +91,7 @@ export default function AdminTrustees() {
             id: string;
             data: Partial<InsertTrustee>;
         }) => {
-            const res = await apiRequest("PATCH", `/api/trustees/${id}`, data);
-            return res.json();
+            return updateTrustee(id, data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["/api/trustees"] });
@@ -111,7 +111,7 @@ export default function AdminTrustees() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
-            await apiRequest("DELETE", `/api/trustees/${id}`);
+            await deleteTrustee(id);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["/api/trustees"] });

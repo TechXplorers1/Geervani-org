@@ -6,50 +6,60 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { auth } from "@/firebase";
+import {
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  User
+} from "firebase/auth";
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Check localStorage on first load
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  // Simple demo login – replace with real API later if you want
   const login = async (email: string, password: string): Promise<boolean> => {
-    // ✅ demo credentials – same as on your login screen
-    const isValid =
-      email === "test@mail.in" && password === "1234567890";
-
-    if (!isValid) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      return true;
+    } catch (error) {
+      console.error("Login failed", error);
       return false;
     }
-
-    // Save any token/jwt here – using a dummy value for now
-    localStorage.setItem("admin_token", "demo_admin_token");
-    setIsAuthenticated(true);
-    return true;
   };
 
-  const logout = () => {
-    localStorage.removeItem("admin_token");
-    setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
+
+  // While checking auth state, we could show a loader or just nothing
+  // But for now, we'll just render children. 
+  // RequireAuth component handles the redirection if not authenticated.
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 }

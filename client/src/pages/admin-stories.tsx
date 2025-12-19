@@ -8,7 +8,8 @@ import {
     type InsertStory,
     type Story,
 } from "@shared/schema";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getStories, createStory, updateStory, deleteStory } from "@/lib/rtdb";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,7 +45,8 @@ export default function AdminStories() {
     const { toast } = useToast();
 
     const { data: stories, isLoading: isStoriesLoading } = useQuery<Story[]>({
-        queryKey: ["/api/stories"],
+        queryKey: ["stories"],
+        queryFn: getStories,
     });
 
     const [editingStory, setEditingStory] = useState<Story | null>(null);
@@ -56,9 +58,9 @@ export default function AdminStories() {
     });
 
     const createMutation = useMutation({
-        mutationFn: async (data: InsertStory) => apiRequest("POST", "/api/stories", data),
+        mutationFn: async (data: InsertStory) => createStory(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
+            queryClient.invalidateQueries({ queryKey: ["stories"] });
             toast({ title: "Success", description: "Story added" });
             setIsDialogOpen(false);
             form.reset();
@@ -66,9 +68,9 @@ export default function AdminStories() {
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (data: Story) => apiRequest("PATCH", `/api/stories/${data.id}`, data),
+        mutationFn: async (data: Story) => updateStory(data.id, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
+            queryClient.invalidateQueries({ queryKey: ["stories"] });
             toast({ title: "Success", description: "Story updated" });
             setIsDialogOpen(false);
             setEditingStory(null);
@@ -77,9 +79,9 @@ export default function AdminStories() {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: async (id: string) => apiRequest("DELETE", `/api/stories/${id}`),
+        mutationFn: async (id: string) => deleteStory(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
+            queryClient.invalidateQueries({ queryKey: ["stories"] });
             toast({ title: "Success", description: "Story deleted" });
         },
     });

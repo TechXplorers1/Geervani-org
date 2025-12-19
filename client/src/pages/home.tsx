@@ -36,7 +36,8 @@ import { insertContactMessageSchema } from "@shared/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+// import { apiRequest } from "@/lib/queryClient";
+import { createContactMessage } from "@/lib/rtdb";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
@@ -77,7 +78,8 @@ export default function Home() {
 
   const volunteerMutation = useMutation({
     mutationFn: async (data: InsertContactMessage) =>
-      await apiRequest("POST", "/api/contact", data),
+      // await apiRequest("POST", "/api/contact", data),
+      await createContactMessage(data),
     onSuccess: () => {
       setVolunteerSuccess(true);
       toast({
@@ -108,7 +110,8 @@ export default function Home() {
 
   const partnerMutation = useMutation({
     mutationFn: async (data: InsertContactMessage) =>
-      await apiRequest("POST", "/api/contact", data),
+      // await apiRequest("POST", "/api/contact", data),
+      await createContactMessage(data),
     onSuccess: () => {
       setPartnerSuccess(true);
       toast({

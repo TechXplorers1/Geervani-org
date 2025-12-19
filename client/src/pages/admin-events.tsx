@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import AdminLayout from "@/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getEvents, createEvent, updateEvent, deleteEvent } from "@/lib/rtdb";
 import {
     Table,
     TableBody,
@@ -41,7 +42,8 @@ export default function AdminEvents() {
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
     const { data: events, isLoading } = useQuery<Event[]>({
-        queryKey: ["/api/events"],
+        queryKey: ["events"],
+        queryFn: getEvents,
     });
 
     const form = useForm<InsertEvent>({
@@ -57,11 +59,10 @@ export default function AdminEvents() {
 
     const createMutation = useMutation({
         mutationFn: async (data: InsertEvent) => {
-            const res = await apiRequest("POST", "/api/events", data);
-            return res.json();
+            return createEvent(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
             toast({ title: "Success", description: "Event created successfully" });
             setIsDialogOpen(false);
             form.reset();
@@ -83,11 +84,10 @@ export default function AdminEvents() {
             id: string;
             data: Partial<InsertEvent>;
         }) => {
-            const res = await apiRequest("PATCH", `/api/events/${id}`, data);
-            return res.json();
+            return updateEvent(id, data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
             toast({ title: "Success", description: "Event updated successfully" });
             setIsDialogOpen(false);
             setEditingEvent(null);
@@ -104,10 +104,10 @@ export default function AdminEvents() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
-            await apiRequest("DELETE", `/api/events/${id}`);
+            await deleteEvent(id);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
             toast({ title: "Success", description: "Event deleted successfully" });
         },
     });

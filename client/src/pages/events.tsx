@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getEvents } from "@/lib/rtdb";
 import { Event } from "@shared/schema";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 
 export default function EventsPage() {
     const { data: events, isLoading } = useQuery<Event[]>({
-        queryKey: ["/api/events"],
+        queryKey: ["events"],
+        queryFn: getEvents,
     });
 
     if (isLoading) {

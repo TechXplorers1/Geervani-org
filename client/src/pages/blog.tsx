@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { db, BlogPost } from "@/lib/db"; // Ensure these are exported from db.ts
+
+import { getBlogPosts } from "@/lib/rtdb";
+import { BlogPost } from "@shared/schema";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -19,8 +21,8 @@ import { format } from "date-fns";
 export default function Blog() {
   // Fetch from DB
   const { data: blogPosts = [], isLoading } = useQuery<BlogPost[]>({
-    queryKey: ["local-blog"],
-    queryFn: db.getBlogPosts,
+    queryKey: ["blog-posts"],
+    queryFn: getBlogPosts,
   });
 
   const categories = [

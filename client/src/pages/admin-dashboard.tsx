@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { db, Program, Project, BlogPost, Staff } from "@/lib/db";
+import { getPrograms, getBlogPosts, getStaff, getProjects, getContactMessages, getDonations } from "@/lib/rtdb";
+import type { Program, Project, BlogPost, Staff } from "@shared/schema";
 import { ContactMessage, Donation } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,34 +12,36 @@ import { Link } from "wouter";
 export default function AdminDashboard() {
   const { data: programs, isLoading: isProgramsLoading, error: programsError } =
     useQuery<Program[]>({
-      queryKey: ["local-programs"],
-      queryFn: db.getPrograms,
+      queryKey: ["programs"],
+      queryFn: getPrograms,
     });
 
   const { data: blogPosts, isLoading: isBlogLoading, error: blogError } =
     useQuery<BlogPost[]>({
-      queryKey: ["local-blog"],
-      queryFn: db.getBlogPosts,
+      queryKey: ["blog-posts"],
+      queryFn: getBlogPosts,
     });
 
   const { data: staff, isLoading: isStaffLoading, error: staffError } =
     useQuery<Staff[]>({
-      queryKey: ["local-staff"],
-      queryFn: db.getStaff,
+      queryKey: ["staff"],
+      queryFn: getStaff,
     });
 
   const { data: projects, isLoading: isProjectsLoading, error: projectsError } =
     useQuery<Project[]>({
-      queryKey: ["local-projects"],
-      queryFn: db.getProjects,
+      queryKey: ["projects"],
+      queryFn: getProjects,
     });
 
   const { data: messages, isLoading: isMessagesLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact-messages"],
+    queryKey: ["contact-messages"],
+    queryFn: getContactMessages,
   });
 
   const { data: donations, isLoading: isDonationsLoading } = useQuery<Donation[]>({
-    queryKey: ["/api/donations"],
+    queryKey: ["donations"],
+    queryFn: getDonations,
   });
 
   const totalPrograms = programs?.length ?? 0;

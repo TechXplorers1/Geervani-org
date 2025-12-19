@@ -1,5 +1,5 @@
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react";
@@ -10,16 +10,26 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 
 const AdminLogin = () => {
-  const { login } = useAuth();
   const [, navigate] = useLocation();
+  const { isAuthenticated, login } = useAuth();
 
-  // Prefill with demo credentials
-  const [email, setEmail] = useState("test@mail.in");
-  const [password, setPassword] = useState("1234567890");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/admin");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // If authenticated, we render null (or a loader) while the effect redirects
+  // This prevents the login form from flashing
+  if (isAuthenticated) return null;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -28,15 +38,18 @@ const AdminLogin = () => {
     setLoading(true);
     setError(null);
 
-    const success = await login(email, password);
-
-    if (success) {
-      navigate("/admin");
-    } else {
-      setError("Invalid email or password. Please try again.");
+    try {
+      const success = await login(email, password);
+      if (!success) {
+        setError("Login failed. Check your email and password.");
+        setLoading(false);
+      }
+      // If success, the component will re-render with isAuthenticated=true and redirect
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.message || "An error occurred during login.");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Donation } from "@shared/schema";
+import { getDonations } from "@/lib/rtdb";
 import AdminLayout from "@/components/AdminLayout";
 import {
     Table,
@@ -14,7 +15,8 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminDonations() {
     const { data: donations, isLoading } = useQuery<Donation[]>({
-        queryKey: ["/api/donations"],
+        queryKey: ["donations"],
+        queryFn: getDonations,
     });
 
     return (

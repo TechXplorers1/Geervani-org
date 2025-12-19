@@ -3,6 +3,7 @@ import CountUp from "react-countup";
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { getImpactStats } from "@/lib/rtdb";
 import type { ImpactStat } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
@@ -13,7 +14,8 @@ export default function StatsSection() {
   });
 
   const { data: stats, isLoading } = useQuery<ImpactStat[]>({
-    queryKey: ["/api/impact-stats"],
+    queryKey: ["impact-stats"],
+    queryFn: getImpactStats,
   });
 
   if (isLoading) {

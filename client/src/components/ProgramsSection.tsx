@@ -12,11 +12,13 @@ import {
   Loader2,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { getPrograms } from "@/lib/rtdb";
 import type { Program } from "@shared/schema";
 
 export default function ProgramsSection() {
   const { data: programs, isLoading } = useQuery<Program[]>({
-    queryKey: ["/api/programs"],
+    queryKey: ["programs"],
+    queryFn: getPrograms,
   });
 
   const galleryImages = programs?.map(p => p.image).filter(Boolean) || [];

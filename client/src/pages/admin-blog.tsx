@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost } from "@/lib/rtdb";
 import { insertBlogPostSchema, type BlogPost, type InsertBlogPost } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import {
@@ -41,16 +42,16 @@ export default function AdminBlog() {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
 
   const { data: posts, isLoading } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts"],
+    queryKey: ["blog-posts"],
+    queryFn: getBlogPosts,
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertBlogPost) => {
-      const res = await apiRequest("POST", "/api/blog-posts", data);
-      return res.json();
+      return createBlogPost(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["blog-posts"] });
       toast({ title: "Success", description: "Blog post created successfully" });
       setIsDialogOpen(false);
     },
@@ -65,11 +66,10 @@ export default function AdminBlog() {
 
   const updateMutation = useMutation({
     mutationFn: async (post: BlogPost) => {
-      const res = await apiRequest("PATCH", `/api/blog-posts/${post.id}`, post);
-      return res.json();
+      return updateBlogPost(post.id, post);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["blog-posts"] });
       toast({ title: "Success", description: "Blog post updated successfully" });
       setIsDialogOpen(false);
       setEditingPost(null);
@@ -85,10 +85,10 @@ export default function AdminBlog() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/blog-posts/${id}`);
+      await deleteBlogPost(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["blog-posts"] });
       toast({ title: "Success", description: "Blog post deleted successfully" });
     },
     onError: (error: Error) => {

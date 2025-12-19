@@ -6,12 +6,14 @@ import { motion } from "framer-motion";
 import { Calendar, Users, Award } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
+import { getProjects } from "@/lib/rtdb";
 import type { Project } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
 export default function Projects() {
   const { data: projects, isLoading } = useQuery<Project[]>({
-    queryKey: ["/api/projects"],
+    queryKey: ["projects"],
+    queryFn: getProjects,
   });
 
   if (isLoading) {

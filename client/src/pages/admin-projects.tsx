@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getProjects, createProject, updateProject, deleteProject } from "@/lib/rtdb";
 import type { Project, InsertProject } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import {
@@ -44,16 +45,17 @@ export default function AdminProjects() {
   const [outcomes, setOutcomes] = useState("");
 
   const { data: projects, isLoading } = useQuery<Project[]>({
-    queryKey: ["/api/projects"],
+    queryKey: ["projects"],
+    queryFn: getProjects,
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertProject) => {
-      const res = await apiRequest("POST", "/api/projects", data);
-      return res.json();
+      // @ts-ignore
+      return createProject(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast({ title: "Success", description: "Project created." });
       setIsDialogOpen(false);
     },
@@ -68,11 +70,11 @@ export default function AdminProjects() {
 
   const updateMutation = useMutation({
     mutationFn: async (project: Project) => {
-      const res = await apiRequest("PATCH", `/api/projects/${project.id}`, project);
-      return res.json();
+      // @ts-ignore
+      return updateProject(project.id, project);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast({ title: "Success", description: "Project updated." });
       setIsDialogOpen(false);
       setEditingProject(null);
@@ -88,10 +90,10 @@ export default function AdminProjects() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/projects/${id}`);
+      await deleteProject(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast({ title: "Deleted", description: "Project removed." });
     },
     onError: (error: Error) => {

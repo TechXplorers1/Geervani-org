@@ -38,7 +38,7 @@ import {
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { apiRequest } from "@/lib/queryClient";
+import { createContactMessage, getPrograms } from "@/lib/rtdb";
 import { useToast } from "@/hooks/use-toast";
 
 const programImage1 = "/images/Women_economic_empowerment_program_d8422519.png";
@@ -138,7 +138,8 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
   const { toast } = useToast();
 
   const { data: programs, isLoading, error } = useQuery<Program[]>({
-    queryKey: ["/api/programs"],
+    queryKey: ["programs"],
+    queryFn: getPrograms,
   });
 
   const program = programs?.find((p) => p.id === id);
@@ -192,7 +193,7 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
 
   const volunteerMutation = useMutation({
     mutationFn: async (data: InsertContactMessage) => {
-      return await apiRequest("POST", "/api/contact", data);
+      return await createContactMessage(data);
     },
     onSuccess: () => {
       setVolunteerSuccess(true);

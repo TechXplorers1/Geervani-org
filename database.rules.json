@@ -1,0 +1,54 @@
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "blog_posts": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "programs": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "team": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "partners": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "projects": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "events": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "stories": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "site_config": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "trustees": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+        "contact_messages": {
+            ".read": "auth != null",
+            ".write": true
+        },
+        "newsletter_subscriptions": {
+            ".read": "auth != null",
+            ".write": true
+        },
+        "donations": {
+            ".read": "auth != null",
+            ".write": true
+        }
+    }
+}

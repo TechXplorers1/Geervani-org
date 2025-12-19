@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { getTrustees } from "@/lib/rtdb";
 import { Trustee } from "@shared/schema";
 import { Loader2, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function TrusteesSection() {
     const { data: trustees, isLoading } = useQuery<Trustee[]>({
-        queryKey: ["/api/trustees"],
+        queryKey: ["trustees"],
+        queryFn: getTrustees,
     });
 
     if (isLoading) {

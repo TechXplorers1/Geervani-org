@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { insertDonationSchema, type InsertDonation } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import { createDonation } from "@/lib/rtdb";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,7 +77,7 @@ export function DonateSection({ initialProgram }: DonateSectionProps) {
           ? data.amount
           : selectedAmount || parseInt(customAmount) || 0;
 
-      return await apiRequest("POST", "/api/donations", {
+      return await createDonation({
         ...data,
         amount: finalAmount,
       });

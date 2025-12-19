@@ -8,7 +8,8 @@ import {
     type InsertStaff,
     type Staff,
 } from "@shared/schema";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getStaff, createTeamMember, updateTeamMember, deleteTeamMember } from "@/lib/rtdb";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +47,8 @@ export default function AdminAbout() {
     // Reuse the Team Tab logic directly here as main content
 
     const { data: staff, isLoading: isStaffLoading } = useQuery<Staff[]>({
-        queryKey: ["/api/staff"],
+        queryKey: ["staff"],
+        queryFn: getStaff,
     });
 
     const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
@@ -58,9 +60,9 @@ export default function AdminAbout() {
     });
 
     const createMutation = useMutation({
-        mutationFn: async (data: InsertStaff) => apiRequest("POST", "/api/staff", data),
+        mutationFn: async (data: InsertStaff) => createTeamMember(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/staff"] });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
             toast({ title: "Success", description: "Staff added" });
             setIsDialogOpen(false);
             form.reset();
@@ -68,9 +70,9 @@ export default function AdminAbout() {
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (data: Staff) => apiRequest("PATCH", `/api/staff/${data.id}`, data),
+        mutationFn: async (data: Staff) => updateTeamMember(data.id, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/staff"] });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
             toast({ title: "Success", description: "Staff updated" });
             setIsDialogOpen(false);
             setEditingStaff(null);
@@ -79,9 +81,9 @@ export default function AdminAbout() {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: async (id: string) => apiRequest("DELETE", `/api/staff/${id}`),
+        mutationFn: async (id: string) => deleteTeamMember(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/staff"] });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
             toast({ title: "Success", description: "Staff deleted" });
         },
     });

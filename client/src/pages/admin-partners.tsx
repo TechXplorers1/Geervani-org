@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { getPartners, createPartner, updatePartner, deletePartner } from "@/lib/rtdb";
 import type { Partner, InsertPartner } from "@shared/schema";
 import AdminLayout from "@/components/AdminLayout";
 import {
@@ -37,16 +38,16 @@ export default function AdminPartners() {
     const [website, setWebsite] = useState("");
 
     const { data: partners, isLoading } = useQuery<Partner[]>({
-        queryKey: ["/api/partners"],
+        queryKey: ["partners"],
+        queryFn: getPartners,
     });
 
     const createMutation = useMutation({
         mutationFn: async (data: InsertPartner) => {
-            const res = await apiRequest("POST", "/api/partners", data);
-            return res.json();
+            return createPartner(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
+            queryClient.invalidateQueries({ queryKey: ["partners"] });
             toast({ title: "Success", description: "Partner created." });
             setIsDialogOpen(false);
         },
@@ -61,11 +62,10 @@ export default function AdminPartners() {
 
     const updateMutation = useMutation({
         mutationFn: async (partner: Partner) => {
-            const res = await apiRequest("PATCH", `/api/partners/${partner.id}`, partner);
-            return res.json();
+            return updatePartner(partner.id, partner);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
+            queryClient.invalidateQueries({ queryKey: ["partners"] });
             toast({ title: "Success", description: "Partner updated." });
             setIsDialogOpen(false);
             setEditingPartner(null);
@@ -81,10 +81,10 @@ export default function AdminPartners() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
-            await apiRequest("DELETE", `/api/partners/${id}`);
+            await deletePartner(id);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
+            queryClient.invalidateQueries({ queryKey: ["partners"] });
             toast({ title: "Deleted", description: "Partner removed." });
         },
         onError: (error: Error) => {

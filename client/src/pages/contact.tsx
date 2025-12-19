@@ -22,7 +22,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+
+// import { apiRequest } from "@/lib/queryClient";
+import { createContactMessage, getSiteConfig } from "@/lib/rtdb";
 import { useToast } from "@/hooks/use-toast";
 
 import { type SiteConfig } from "@shared/schema";
@@ -32,7 +34,8 @@ export default function Contact() {
   const { toast } = useToast();
 
   const { data: config } = useQuery<SiteConfig>({
-    queryKey: ["/api/site-config"],
+    queryKey: ["site-config"],
+    queryFn: async () => await getSiteConfig()
   });
 
   const form = useForm<InsertContactMessage>({
@@ -47,7 +50,8 @@ export default function Contact() {
 
   const contactMutation = useMutation({
     mutationFn: async (data: InsertContactMessage) => {
-      return await apiRequest("POST", "/api/contact", data);
+      // return await apiRequest("POST", "/api/contact", data);
+      return await createContactMessage(data);
     },
     onSuccess: () => {
       setIsSuccess(true);

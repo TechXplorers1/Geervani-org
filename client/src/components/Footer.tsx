@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { createNewsletterSubscription } from "@/lib/rtdb";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
@@ -27,7 +27,8 @@ export default function Footer() {
 
   const newsletterMutation = useMutation({
     mutationFn: async (email: string) => {
-      return await apiRequest("POST", "/api/newsletter", { email });
+      // apiRequest("POST", "/api/newsletter", { email }) -> createNewsletterSubscription({ email })
+      return await createNewsletterSubscription({ email });
     },
     onSuccess: () => {
       toast({

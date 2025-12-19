@@ -4,9 +4,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProgramSchema, type InsertProgram, type Program } from "@shared/schema";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-// import { db, Program } from "@/lib/db"; // unused
-// We use Program from schema now
+import { queryClient } from "@/lib/queryClient";
+import { getPrograms, createProgram, updateProgram, deleteProgram } from "@/lib/rtdb";
 import AdminLayout from "@/components/AdminLayout";
 import {
   Table,
@@ -43,15 +42,17 @@ export default function AdminPrograms() {
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
 
   const { data: programs, isLoading } = useQuery<Program[]>({
-    queryKey: ["/api/programs"],
+    queryKey: ["programs"],
+    queryFn: getPrograms,
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertProgram) => {
-      return await apiRequest("POST", "/api/programs", data);
+      // @ts-ignore
+      return await createProgram(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/programs"] });
+      queryClient.invalidateQueries({ queryKey: ["programs"] });
       toast({ title: "Success", description: "Program created successfully" });
       setIsDialogOpen(false);
     },
@@ -66,10 +67,11 @@ export default function AdminPrograms() {
 
   const updateMutation = useMutation({
     mutationFn: async (program: Program) => {
-      return await apiRequest("PATCH", `/api/programs/${program.id}`, program);
+      // @ts-ignore
+      return await updateProgram(program.id, program);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/programs"] });
+      queryClient.invalidateQueries({ queryKey: ["programs"] });
       toast({ title: "Success", description: "Program updated successfully" });
       setIsDialogOpen(false);
       setEditingProgram(null);
@@ -85,10 +87,10 @@ export default function AdminPrograms() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number | string) => {
-      await apiRequest("DELETE", `/api/programs/${id}`);
+      await deleteProgram(String(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/programs"] });
+      queryClient.invalidateQueries({ queryKey: ["programs"] });
       toast({ title: "Success", description: "Program deleted successfully" });
     },
     onError: (error: Error) => {

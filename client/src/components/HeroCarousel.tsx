@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { getPrograms } from "@/lib/rtdb";
 import type { Program } from "@shared/schema";
 import { Link } from "wouter"; // 👈 added
 
@@ -58,7 +59,8 @@ export default function HeroCarousel() {
 
   // 🔹 Load real programs from API (same data ProgramDetail uses)
   const { data: programs } = useQuery<Program[]>({
-    queryKey: ["/api/programs"],
+    queryKey: ["programs"],
+    queryFn: getPrograms,
   });
 
   // build hero slides from programs if available
