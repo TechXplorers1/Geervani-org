@@ -325,9 +325,24 @@ export default function Footer() {
 
         <div className="border-t border-border pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-muted-foreground font-sans">
-              © {new Date().getFullYear()} TGF. All rights reserved.
-            </p>
+            <div className="text-center md:text-left">
+              <p className="text-sm text-muted-foreground font-sans">
+                © {new Date().getFullYear()} TGF. All rights reserved.
+              </p>
+
+              <p className="text-sm text-muted-foreground font-sans mt-2">
+                Developed by{" "}
+                <a
+                  href="https://techxplorers.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold hover:text-primary transition-colors"
+                >
+                  TechXplorers Private Limited
+                </a>
+              </p>
+            </div>
+
             <div className="flex space-x-6">
               <button
                 type="button"
@@ -336,6 +351,7 @@ export default function Footer() {
               >
                 Privacy Policy
               </button>
+
               <button
                 type="button"
                 onClick={() => setOpenModal("terms")}
@@ -346,47 +362,50 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Single Policy / Terms Modal */}
-      {openModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="policy-dialog-title"
-        >
-          <div className="relative w-full max-w-lg rounded-xl bg-background p-6 shadow-lg max-h-[80vh] flex flex-col">
-            <button
-              type="button"
-              onClick={() => setOpenModal(null)}
-              className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border hover:bg-accent"
-              aria-label="Close dialog"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <h2
-              id="policy-dialog-title"
-              className="font-heading text-lg font-semibold mb-3 pr-8"
-            >
-              {renderModalTitle()}
-            </h2>
-            <div className="mt-1 space-y-3 text-sm text-muted-foreground overflow-y-auto pr-2">
-              {renderModalContent()}
-            </div>
-            <div className="mt-4 flex justify-end">
-              <Button
+        {/* Single Policy / Terms Modal */}
+        {openModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="policy-dialog-title"
+          >
+            <div className="relative w-full max-w-lg rounded-xl bg-background p-6 shadow-lg max-h-[80vh] flex flex-col">
+              <button
                 type="button"
-                variant="default"
                 onClick={() => setOpenModal(null)}
-                className="font-sans text-sm"
+                className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border hover:bg-accent"
+                aria-label="Close dialog"
               >
-                Close
-              </Button>
+                <X className="h-4 w-4" />
+              </button>
+
+              <h2
+                id="policy-dialog-title"
+                className="font-heading text-lg font-semibold mb-3 pr-8"
+              >
+                {renderModalTitle()}
+              </h2>
+
+              <div className="mt-1 space-y-3 text-sm text-muted-foreground overflow-y-auto pr-2">
+                {renderModalContent()}
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={() => setOpenModal(null)}
+                  className="font-sans text-sm"
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </footer>
   );
 }
