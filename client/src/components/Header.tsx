@@ -62,7 +62,7 @@ export default function Header({ transparent = false }: { transparent?: boolean 
             >
               <img
                 src="/logo.png"
-                alt="TGF Logo"
+                alt="RSF Logo"
                 className={`transition-all duration-300 object-contain rounded-md ${isTransparent ? "w-12 h-12 md:w-16 md:h-16" : "w-10 h-10 rounded-full"
                   }`}
               />
@@ -70,12 +70,12 @@ export default function Header({ transparent = false }: { transparent?: boolean 
               <div className={`flex flex-col justify-center transition-all duration-300 ${isTransparent ? "opacity-100" : "opacity-100"}`}>
                 <h1 className={`font-heading font-bold leading-none tracking-tight ${isTransparent ? "text-white text-2xl md:text-3xl drop-shadow-md" : "text-gray-900 text-lg"
                   }`}>
-                  TGF
+                  RSF
                 </h1>
                 {/* Hide full name on scroll to save space, show at top */}
                 <p className={`text-[10px] uppercase font-bold tracking-widest hidden sm:block leading-none mt-1 ${isTransparent ? "text-white/90 drop-shadow-sm" : "text-gray-600"
                   }`}>
-                  Techxplorers Global Foundation
+                  ROOTSPRING FOUNDATION
                 </p>
               </div>
             </motion.div>

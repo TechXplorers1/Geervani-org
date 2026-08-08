@@ -28,7 +28,7 @@ export const siteConfig = pgTable("site_config", {
   contactFormTitle: text("contact_form_title").notNull().default("Send us a message"),
   contactFormSubtitle: text("contact_form_subtitle").notNull().default("Fill out the form below and we'll get back to you within 24 hours."),
   // About Page
-  aboutHeroTitle: text("about_hero_title").notNull().default("About TGF"),
+  aboutHeroTitle: text("about_hero_title").notNull().default("About RSF"),
   aboutHeroSubtitle: text("about_hero_subtitle").notNull().default("Community Advocacy for Gender and Development"),
   missionTitle: text("mission_title").notNull().default("Our Mission"),
   missionDescription: text("mission_description").notNull().default("To empower African communities through sustainable development programs that promote gender equality, youth development, and economic empowerment. We work alongside local communities to create lasting change that transforms lives and builds resilient societies."),

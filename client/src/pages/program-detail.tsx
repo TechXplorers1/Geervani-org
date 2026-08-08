@@ -178,7 +178,7 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
     defaultValues: {
       name: "",
       email: "",
-      subject: `I’d like to volunteer for ${program?.title || "TGF"}`,
+      subject: `I’d like to volunteer for ${program?.title || "RSF"}`,
       message: "",
     },
   });
@@ -187,7 +187,7 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
   useEffect(() => {
     volunteerForm.setValue(
       "subject",
-      `I’d like to volunteer for ${program?.title || "TGF"}`
+      `I’d like to volunteer for ${program?.title || "RSF"}`
     );
   }, [program?.title, volunteerForm]);
 
@@ -204,7 +204,7 @@ export default function ProgramDetail({ id }: ProgramDetailProps) {
       volunteerForm.reset({
         name: "",
         email: "",
-        subject: `I’d like to volunteer for ${program?.title || "TGF"}`,
+        subject: `I’d like to volunteer for ${program?.title || "RSF"}`,
         message: "",
       });
       setTimeout(() => setVolunteerSuccess(false), 3000);

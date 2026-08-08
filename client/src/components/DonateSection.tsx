@@ -125,7 +125,7 @@ export function DonateSection({ initialProgram }: DonateSectionProps) {
         key: keyId, // Key ID from server
         amount: orderAmount, // Amount from server (should match)
         currency: "INR",
-        name: "TGF",
+        name: "RSF",
         description: "Donation",
         order_id: orderId, // Pass the Order ID here
         handler: function (response: any) {

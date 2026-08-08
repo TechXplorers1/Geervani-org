@@ -74,15 +74,15 @@ const AdminLogin = () => {
                   <div className="flex items-center gap-4">
                     <img
                       src="/logo.png"
-                      alt="TGF Logo"
+                      alt="RSF Logo"
                       className="h-24 w-24 rounded-2xl shadow-lg shadow-black/40"
                     />
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.24em] text-blue-200/90">
-                        TGF • NGO Platform
+                        RSF • NGO Platform
                       </p>
                       <h1 className="text-3xl lg:text-4xl font-semibold">
-                        TGF Admin
+                        RSF Admin
                       </h1>
                     </div>
                   </div>
@@ -135,12 +135,12 @@ const AdminLogin = () => {
                 {/* Header */}
                 <div className="mb-6 text-center">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-blue-600">
-                    TGF • Admin Console
+                    RSF • Admin Console
                   </p>
                   <h2 className="text-2xl font-semibold mt-2">Admin Login</h2>
                   <p className="text-xs text-gray-500 mt-1">
                     Use your authorized administrator credentials to access the
-                    TGF dashboard.
+                    RSF dashboard.
                   </p>
                 </div>
 
@@ -231,7 +231,7 @@ const AdminLogin = () => {
               </div>
 
               <p className="mt-5 text-[10px] text-center text-slate-400">
-                © {new Date().getFullYear()} TGF. Secure internal admin
+                © {new Date().getFullYear()} RSF. Secure internal admin
                 environment.
               </p>
             </div>

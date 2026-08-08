@@ -250,7 +250,7 @@ const INITIAL_STAFF: Staff[] = [
         id: "1",
         name: "Dr. Aditi Rao",
         role: "Executive Director",
-        bio: "Leading TGF with 15+ years of experience in community development and gender advocacy.",
+        bio: "Leading RSF with 15+ years of experience in community development and gender advocacy.",
         image: teamImage1,
         email: "aditi@tgf.org",
         isActive: true,

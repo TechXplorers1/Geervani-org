@@ -50,7 +50,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <aside className="hidden md:flex md:w-64 flex-col border-r bg-[#0f172a] text-slate-100">
         <div className="px-6 py-4 border-b border-slate-800">
-          <h1 className="font-heading font-bold text-xl">TGF Admin</h1>
+          <h1 className="font-heading font-bold text-xl">RSF Admin</h1>
           <p className="text-xs text-slate-400">Internal dashboard</p>
         </div>
 

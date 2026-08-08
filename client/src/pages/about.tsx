@@ -80,7 +80,7 @@ export default function About() {
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl mb-6">
-                About TGF
+                About RSF
               </h1>
               <p className="font-sans text-lg md:text-xl text-muted-foreground">
                 Community Advocacy for Gender and Development

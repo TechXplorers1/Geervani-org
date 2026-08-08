@@ -79,7 +79,7 @@ export default function Footer() {
       return (
         <>
           <p>
-            We value your privacy. This Privacy Policy explains how TGF
+            We value your privacy. This Privacy Policy explains how RSF
             collects, uses, and protects your personal information when you
             interact with our website, programs, and services.
           </p>
@@ -105,7 +105,7 @@ export default function Footer() {
       return (
         <>
           <p>
-            By accessing or using the TGF website, you agree to these Terms
+            By accessing or using the RSF website, you agree to these Terms
             of Service. Please read them carefully before using our site.
           </p>
           <p>
@@ -114,7 +114,7 @@ export default function Footer() {
             to interfere with its operation, or use it for unlawful activities.
           </p>
           <p>
-            TGF reserves the right to update or modify these terms at any
+            RSF reserves the right to update or modify these terms at any
             time. Continued use of the website after changes means you accept
             the updated terms.
           </p>
@@ -167,10 +167,10 @@ export default function Footer() {
             <div className="flex items-center space-x-2 mb-4">
               <img
                 src="/logo.png"
-                alt="TGF Logo"
+                alt="RSF Logo"
                 className="w-16 h-16 rounded-md shadow-sm"
               />
-              <h3 className="font-heading font-bold text-xl">TGF</h3>
+              <h3 className="font-heading font-bold text-xl">RSF</h3>
             </div>
             <p className="text-muted-foreground mb-4 font-sans text-sm">
               Community Advocacy for Gender and Development. Empowering Indian
@@ -327,7 +327,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-center md:text-left">
               <p className="text-sm text-muted-foreground font-sans">
-                © {new Date().getFullYear()} TGF. All rights reserved.
+                © {new Date().getFullYear()} RSF. All rights reserved.
               </p>
 
               <p className="text-sm text-muted-foreground font-sans mt-2">
